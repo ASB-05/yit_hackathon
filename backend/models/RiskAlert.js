@@ -13,6 +13,8 @@ const RiskAlertSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+RiskAlertSchema.index({ course: 1, resolved: 1 });
+
 module.exports = mongoose.model('RiskAlert', RiskAlertSchema);
 
 

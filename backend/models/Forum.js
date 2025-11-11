@@ -24,6 +24,8 @@ const ThreadSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+ThreadSchema.index({ course: 1, updatedAt: -1 });
+
 module.exports = mongoose.model('Thread', ThreadSchema);
 
 

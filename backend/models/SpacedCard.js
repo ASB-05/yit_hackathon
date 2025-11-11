@@ -17,6 +17,8 @@ const SpacedCardSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+SpacedCardSchema.index({ user: 1, course: 1, dueAt: 1 });
+
 module.exports = mongoose.model('SpacedCard', SpacedCardSchema);
 
 

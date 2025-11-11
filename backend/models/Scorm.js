@@ -22,6 +22,8 @@ const ScormRuntimeSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+ScormRuntimeSchema.index({ user: 1, scormPackage: 1 }, { unique: true });
+
 module.exports = {
   ScormPackage: mongoose.model('ScormPackage', ScormPackageSchema),
   ScormRuntime: mongoose.model('ScormRuntime', ScormRuntimeSchema),

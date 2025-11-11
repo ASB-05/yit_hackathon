@@ -22,6 +22,8 @@ const AssignmentSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+AssignmentSchema.index({ course: 1, dueAt: 1 });
+
 module.exports = mongoose.model('Assignment', AssignmentSchema);
 
 

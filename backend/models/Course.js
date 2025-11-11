@@ -59,6 +59,9 @@ const CourseSchema = new mongoose.Schema({
     allowSkipping: { type: Boolean, default: false },
     scormCompliant: { type: Boolean, default: true },
   },
-});
+}, { timestamps: true });
+
+CourseSchema.index({ instructor: 1 });
+CourseSchema.index({ title: 'text', description: 'text' });
 
 module.exports = mongoose.model('Course', CourseSchema);

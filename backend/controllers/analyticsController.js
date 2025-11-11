@@ -32,6 +32,7 @@ exports.listAtRiskStudents = async (req, res) => {
       if (!lastEventByUser.has(String(e.user))) lastEventByUser.set(String(e.user), e.createdAt);
     }
 
+    const limit = Math.min(parseInt(req.query.limit, 10) || 50, 200);
     const atRisk = [];
     for (const p of progress) {
       const lastSeen = lastEventByUser.get(String(p.user));
@@ -44,7 +45,7 @@ exports.listAtRiskStudents = async (req, res) => {
         });
       }
     }
-    res.json({ atRisk });
+    res.json({ atRisk: atRisk.slice(0, limit) });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');

@@ -16,11 +16,12 @@ module.exports = async function (req, res, next) {
   // Verify token
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded.user;
-    
-    // You can also attach the full user object if needed
-    // req.user = await User.findById(decoded.user.id).select('-password');
-    
+    const user = await User.findById(decoded.user.id).select('-password');
+    if (!user) {
+      return res.status(401).json({ msg: 'User not found' });
+    }
+    req.auth = decoded.user;
+    req.user = user;
     next();
   } catch (err) {
     res.status(401).json({ msg: 'Token is not valid' });

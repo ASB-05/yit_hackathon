@@ -1,42 +1,33 @@
 import { useState } from "react";
-import { StudentDashboard } from "./components/StudentDashboard";
-import { InstructorDashboard } from "./components/InstructorDashboard";
-import { AdminDashboard } from "./components/AdminDashboard";
-import { CourseViewer } from "./components/CourseViewer";
-import Login from "./components/login"; // 👈 New login component
-import "./App.css";
+import { StudentDashboard } from './components/StudentDashboard';
+import { InstructorDashboard } from './components/InstructorDashboard';
+import { AdminDashboard } from './components/AdminDashboard';
+import { CourseViewer } from './components/CourseViewer';
+import Login from './components/login';
+import './App.css';
+import { useAuth } from './context/AuthContext';
 
 export default function App() {
-  const [userRole, setUserRole] = useState<
-    "student" | "instructor" | "admin" | null
-  >(null);
+  const { role, isAuthenticated } = useAuth();
   const [activeCourse, setActiveCourse] = useState<string | null>(null);
 
-  // 🟣 STEP 1: Show the Login page first
-  if (!userRole) {
-    return <Login onSelectRole={setUserRole} />;
+  if (!isAuthenticated || !role) {
+    return <Login />;
   }
 
-  // 🟢 STEP 2: If student opens a course, show Course Viewer
-  if (activeCourse && userRole === "student") {
-    return (
-      <CourseViewer
-        courseId={activeCourse}
-        onBack={() => setActiveCourse(null)}
-      />
-    );
+  if (activeCourse && role === 'student') {
+    return <CourseViewer courseId={activeCourse} onBack={() => setActiveCourse(null)} />;
   }
 
-  // 🔵 STEP 3: Show the appropriate dashboard after login
-  if (userRole === "student") {
-    return <StudentDashboard onEnrollCourse={setActiveCourse} />;
+  if (role === 'student') {
+    return <StudentDashboard onOpenCourse={setActiveCourse} />;
   }
 
-  if (userRole === "instructor") {
+  if (role === 'instructor') {
     return <InstructorDashboard />;
   }
 
-  if (userRole === "admin") {
+  if (role === 'admin') {
     return <AdminDashboard />;
   }
 

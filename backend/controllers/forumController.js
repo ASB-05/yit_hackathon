@@ -50,8 +50,23 @@ exports.markExpertAnswer = async (req, res) => {
 exports.listThreads = async (req, res) => {
   try {
     const { courseId } = req.params;
-    const list = await Thread.find({ course: courseId }).sort({ updatedAt: -1 });
-    res.json(list);
+    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+    const limit = Math.min(parseInt(req.query.limit, 10) || 20, 100);
+    const skip = (page - 1) * limit;
+    const filter = { course: courseId };
+    const [threads, total] = await Promise.all([
+      Thread.find(filter).sort({ updatedAt: -1 }).skip(skip).limit(limit),
+      Thread.countDocuments(filter),
+    ]);
+    res.json({
+      data: threads,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');

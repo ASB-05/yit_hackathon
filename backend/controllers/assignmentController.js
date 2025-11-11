@@ -15,8 +15,23 @@ exports.createAssignment = async (req, res) => {
 
 exports.listAssignments = async (req, res) => {
   try {
-    const list = await Assignment.find({ course: req.params.courseId }).sort({ createdAt: -1 });
-    res.json(list);
+    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+    const limit = Math.min(parseInt(req.query.limit, 10) || 20, 100);
+    const skip = (page - 1) * limit;
+    const filter = { course: req.params.courseId };
+    const [items, total] = await Promise.all([
+      Assignment.find(filter).sort({ dueAt: 1 }).skip(skip).limit(limit),
+      Assignment.countDocuments(filter),
+    ]);
+    res.json({
+      data: items,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');

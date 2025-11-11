@@ -8,8 +8,30 @@ const adaptiveService = require('../services/adaptiveService');
 // @desc    Get all courses
 exports.getAllCourses = async (req, res) => {
   try {
-    const courses = await Course.find().populate('instructor', ['name']);
-    res.json(courses);
+    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+    const limit = Math.min(parseInt(req.query.limit, 10) || 20, 100);
+    const skip = (page - 1) * limit;
+    const filter = {};
+    if (req.query.instructor) {
+      filter.instructor = req.query.instructor;
+    }
+    const [courses, total] = await Promise.all([
+      Course.find(filter)
+        .populate('instructor', ['name'])
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 }),
+      Course.countDocuments(filter),
+    ]);
+    res.json({
+      data: courses,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
@@ -39,7 +61,7 @@ exports.createCourse = async (req, res) => {
   const { title, description, structure, settings } = req.body;
   try {
     // Check user role (assuming authMiddleware adds user to req)
-    const user = await User.findById(req.user.id);
+    const user = req.user;
     if (user.role !== 'instructor' && user.role !== 'admin') {
       return res.status(401).json({ msg: 'User not authorized' });
     }
@@ -75,8 +97,20 @@ exports.getMyEnrolledCourses = async (req, res) => {
     if (!user) {
         return res.status(404).json({ msg: 'User not found' });
     }
-    
-    res.json(user.enrolledCourses);
+    const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+    const limit = Math.min(parseInt(req.query.limit, 10) || 20, 100);
+    const total = user.enrolledCourses.length;
+    const start = (page - 1) * limit;
+    const data = user.enrolledCourses.slice(start, start + limit);
+    res.json({
+      data,
+      meta: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
@@ -87,7 +121,7 @@ exports.getMyEnrolledCourses = async (req, res) => {
 // @desc    Add a new week to a course (Instructor/Admin)
 exports.addWeek = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = req.user;
     if (user.role !== 'instructor' && user.role !== 'admin') {
       return res.status(401).json({ msg: 'User not authorized' });
     }
@@ -107,7 +141,7 @@ exports.addWeek = async (req, res) => {
 // @desc    Add a new unit to a week (Instructor/Admin)
 exports.addUnit = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = req.user;
     if (user.role !== 'instructor' && user.role !== 'admin') {
       return res.status(401).json({ msg: 'User not authorized' });
     }
@@ -131,7 +165,7 @@ exports.addUnit = async (req, res) => {
 // @desc    Add a new lesson to a unit (Instructor/Admin)
 exports.addLesson = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    const user = req.user;
     if (user.role !== 'instructor' && user.role !== 'admin') {
       return res.status(401).json({ msg: 'User not authorized' });
     }
@@ -183,6 +217,21 @@ exports.recordProgress = async (req, res) => {
     const completed = progress.lessons.filter((l) => l.status === 'completed' || l.status === 'mastered').length;
     progress.completionPercent = Math.round((completed / total) * 100);
     await progress.save();
+    res.json(progress);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+};
+
+// @route   GET api/courses/:id/progress
+// @desc    Get progress for a course (Authenticated)
+exports.getCourseProgress = async (req, res) => {
+  try {
+    const progress = await Progress.findOne({ user: req.user.id, course: req.params.id });
+    if (!progress) {
+      return res.json({ completionPercent: 0, lessons: [] });
+    }
     res.json(progress);
   } catch (err) {
     console.error(err.message);
