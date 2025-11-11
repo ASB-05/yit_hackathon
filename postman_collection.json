@@ -1,0 +1,39 @@
+{
+  "info": { "name": "YIT LMS API", "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json" },
+  "item": [
+    {
+      "name": "Auth - Register",
+      "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{baseUrl}}/api/auth/register", "body": { "mode": "raw", "raw": "{\n  \"name\": \"Student One\",\n  \"email\": \"student@demo.com\",\n  \"password\": \"student123\",\n  \"role\": \"student\"\n}" } }
+    },
+    {
+      "name": "Auth - Login",
+      "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "url": "{{baseUrl}}/api/auth/login", "body": { "mode": "raw", "raw": "{\n  \"email\": \"student@demo.com\",\n  \"password\": \"student123\"\n}" } }
+    },
+    {
+      "name": "Courses - List",
+      "request": { "method": "GET", "header": [{ "key": "x-auth-token", "value": "{{token}}" }], "url": "{{baseUrl}}/api/courses?limit=10" }
+    },
+    {
+      "name": "Courses - My Enrolled",
+      "request": { "method": "GET", "header": [{ "key": "x-auth-token", "value": "{{token}}" }], "url": "{{baseUrl}}/api/courses/my/enrolled?limit=10" }
+    },
+    {
+      "name": "Assignments - List for Course",
+      "request": { "method": "GET", "header": [{ "key": "x-auth-token", "value": "{{token}}" }], "url": "{{baseUrl}}/api/assignments/course/{{courseId}}" }
+    },
+    {
+      "name": "Forums - List Threads",
+      "request": { "method": "GET", "header": [{ "key": "x-auth-token", "value": "{{token}}" }], "url": "{{baseUrl}}/api/forums/course/{{courseId}}?limit=10" }
+    },
+    {
+      "name": "Analytics - At Risk",
+      "request": { "method": "GET", "header": [{ "key": "x-auth-token", "value": "{{token}}" }], "url": "{{baseUrl}}/api/analytics/course/{{courseId}}/at-risk?limit=10" }
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "token", "value": "" },
+    { "key": "courseId", "value": "" }
+  ]
+}
+

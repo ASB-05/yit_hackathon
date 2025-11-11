@@ -15,6 +15,7 @@ import {
   File,
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+import { api, apiRequest } from '../lib/api';
 
 interface AssignmentViewerProps {
   courseId: string;
@@ -22,6 +23,7 @@ interface AssignmentViewerProps {
 
 export function AssignmentViewer({ courseId }: AssignmentViewerProps) {
   const [submissionText, setSubmissionText] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   const assignments = [
     {
@@ -307,7 +309,32 @@ export function AssignmentViewer({ courseId }: AssignmentViewerProps) {
           </div>
 
           <div className="flex gap-2 mt-4">
-            <Button className="flex-1">Submit Assignment</Button>
+            <Button
+              className="flex-1"
+              disabled={submitting}
+              onClick={async () => {
+                try {
+                  setSubmitting(true);
+                  // demo: submit for the first assignment ID
+                  const target = assignments[0];
+                  await apiRequest(`/api/assignments/${target.id}/submit`, {
+                    method: 'POST',
+                    body: {
+                      artifacts: submissionText
+                        ? [{ type: 'text', text: submissionText }]
+                        : [{ type: 'text', text: 'Submitted via UI' }],
+                    },
+                  });
+                  setSubmissionText('');
+                } catch (e) {
+                  console.error(e);
+                } finally {
+                  setSubmitting(false);
+                }
+              }}
+            >
+              {submitting ? 'Submitting...' : 'Submit Assignment'}
+            </Button>
             <Button variant="outline">Save Draft</Button>
           </div>
         </CardContent>

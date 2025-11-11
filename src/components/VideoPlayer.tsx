@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Slider } from './ui/slider';
@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
+import { api, apiRequest } from '../lib/api';
 
 interface VideoPlayerProps {
   lessonId: string;
@@ -39,11 +40,10 @@ export function VideoPlayer({ lessonId, onBack }: VideoPlayerProps) {
   const [showQuiz, setShowQuiz] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
   const [noteText, setNoteText] = useState('');
+  const [contentId, setContentId] = useState<string | null>(null);
+  const [quizTimeline, setQuizTimeline] = useState<any[]>([]);
 
-  const notes = [
-    { timestamp: '2:15', text: 'Programming is a way to communicate with computers' },
-    { timestamp: '5:30', text: 'Key concepts: variables, functions, loops' },
-  ];
+  const [notes, setNotes] = useState<{ timestamp: string; text: string }[]>([]);
 
   const quizQuestion = {
     question: 'What is the primary purpose of a programming language?',
@@ -65,10 +65,32 @@ export function VideoPlayer({ lessonId, onBack }: VideoPlayerProps) {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const addNote = () => {
-    if (noteText.trim()) {
-      console.log('Adding note:', noteText, 'at', formatTime(currentTime));
+  useEffect(() => {
+    // Demo: fetch notes if we have lessonId
+    api.getNotes(lessonId).then((list: any[]) => {
+      const normalized = (list || []).map((n) => ({
+        timestamp: n.timestampSeconds ? formatTime(n.timestampSeconds) : '0:00',
+        text: n.content || '',
+      }));
+      setNotes(normalized);
+    }).catch(() => setNotes([]));
+  }, [lessonId]);
+
+  const addNote = async () => {
+    if (!noteText.trim()) return;
+    try {
+      // In a full integration you’d resolve contentId for the lesson
+      const cid = contentId || 'placeholder';
+      await api.addNote(cid, {
+        content: noteText.trim(),
+        timestampSeconds: currentTime,
+        lessonId,
+        courseId: 'placeholder',
+      });
+      setNotes([{ timestamp: formatTime(currentTime), text: noteText.trim() }, ...notes]);
       setNoteText('');
+    } catch (e) {
+      console.error(e);
     }
   };
 

@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { api } from "../lib/api";
 
 // ✅ define proper interfaces
 interface ReplyItem {
@@ -57,6 +58,7 @@ export function DiscussionForum({ courseId, lessonId }: DiscussionForumProps) {
   const [newQuestion, setNewQuestion] = useState("");
   const [replyText, setReplyText] = useState<{ [key: string]: string }>({});
   const [showReply, setShowReply] = useState<string | null>(null);
+  const [posting, setPosting] = useState(false);
 
   // ✅ fixed replies and structure
   const discussions: DiscussionItem[] = [
@@ -130,10 +132,16 @@ export function DiscussionForum({ courseId, lessonId }: DiscussionForumProps) {
     console.log("Liked:", id);
   };
 
-  const handleReply = (discussionId: string) => {
-    console.log("Reply to:", discussionId, replyText[discussionId]);
-    setReplyText({ ...replyText, [discussionId]: "" });
-    setShowReply(null);
+  const handleReply = async (discussionId: string) => {
+    try {
+      const body = replyText[discussionId]?.trim();
+      if (!body) return;
+      await api.replyToThread(discussionId, { body });
+      setReplyText({ ...replyText, [discussionId]: "" });
+      setShowReply(null);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return (
@@ -154,7 +162,25 @@ export function DiscussionForum({ courseId, lessonId }: DiscussionForumProps) {
             <p className="text-sm text-gray-600">
               Be specific and clear to get the best answers
             </p>
-            <Button onClick={() => setNewQuestion("")}>Post Question</Button>
+            <Button
+              disabled={posting || !newQuestion.trim()}
+              onClick={async () => {
+                try {
+                  setPosting(true);
+                  await api.createThread({
+                    course: courseId,
+                    lessonId,
+                    title: newQuestion.slice(0, 60),
+                    body: newQuestion,
+                  });
+                  setNewQuestion("");
+                } finally {
+                  setPosting(false);
+                }
+              }}
+            >
+              {posting ? "Posting..." : "Post Question"}
+            </Button>
           </div>
         </CardContent>
       </Card>

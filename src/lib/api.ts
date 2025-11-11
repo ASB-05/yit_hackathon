@@ -16,6 +16,7 @@ export const setAuthToken = (token: string | null) => {
 export interface ApiRequestOptions extends RequestInit {
   params?: Record<string, string | number | undefined>;
   auth?: boolean;
+  body?: any;
 }
 
 const buildUrl = (path: string, params?: Record<string, string | number | undefined>) => {
