@@ -1,68 +1,316 @@
-/* App.css */
+/* ======================================
+   LEARNHUB PRO - Professional LMS Styles
+   ====================================== */
+
+/* --------------------
+   1. Root & Global Styles
+   -------------------- */
+:root {
+  /* Color Palette */
+  --primary-color: #6a11cb;
+  --primary-hover: #520aa7;
+  --secondary-color: #2575fc;
+  --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  --gradient-primary-hover: linear-gradient(135deg, #8e2de2, #4a00e0);
+
+  --text-light: #ffffff;
+  --text-dark: #1e293b;
+  --text-muted: #94a3b8;
+  --bg-light: #f8fafc;
+  --bg-dark-transparent: rgba(10, 10, 30, 0.75);
+  --border-light: #e2e8f0;
+
+  /* Typography */
+  --font-family: "Poppins", -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+
+  /* Spacing & Borders */
+  --spacing-unit: 8px;
+  --border-radius-sm: 8px;
+  --border-radius-md: 16px;
+  --border-radius-lg: 20px;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --box-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
 body {
   margin: 0;
-  padding: 0;
-  font-family: "Poppins", sans-serif;
-  background: 
-    linear-gradient(rgba(10, 10, 30, 0.75), rgba(10, 10, 30, 0.75)),
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease;
+}
+
+/* --------------------
+   2. Login & Authentication
+   -------------------- */
+.auth-body {
+  background:
+    var(--bg-dark-transparent),
     url("https://img.freepik.com/free-photo/open-book-with-colorful-education-icons_1232-2106.jpg?size=1600");
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
-  color: white;
+  color: var(--text-light);
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/* login box */
 .login-container {
   background: rgba(0, 0, 0, 0.6);
-  border-radius: 20px;
-  padding: 40px;
+  border-radius: var(--border-radius-lg);
+  padding: calc(var(--spacing-unit) * 5);
   text-align: center;
   width: 380px;
   box-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
-  animation: fadeIn 1s ease-in-out;
+  animation: fadeIn 0.8s ease-out;
 }
 
 .login-container h1 {
-  font-size: 2rem;
-  color: #ffffff;
-  margin-bottom: 15px;
+  font-size: 2.2rem;
+  margin-bottom: var(--spacing-unit);
   text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
 }
 
 .login-container p {
-  color: #d1d1ff;
-  margin-bottom: 25px;
+  color: #e0e7ff;
+  margin-bottom: calc(var(--spacing-unit) * 3);
   font-size: 1.1rem;
 }
 
 .role-buttons {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: calc(var(--spacing-unit) * 2);
 }
 
 .role-buttons button {
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  background: var(--gradient-primary);
   border: none;
-  padding: 12px 20px;
-  border-radius: 12px;
-  color: white;
-  font-size: 1rem;
+  padding: 14px 22px;
+  border-radius: var(--border-radius-sm);
+  color: var(--text-light);
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .role-buttons button:hover {
-  background: linear-gradient(135deg, #8e2de2, #4a00e0);
-  transform: scale(1.05);
+  background: var(--gradient-primary-hover);
+  transform: translateY(-3px);
+  box-shadow: var(--box-shadow-hover);
 }
 
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 10, 30, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(8px);
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: calc(var(--spacing-unit) * 5);
+  border-radius: var(--border-radius-md);
+  width: 400px;
+  text-align: center;
+  color: var(--text-light);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
+  animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal-content h2 {
+  margin-bottom: calc(var(--spacing-unit) * 2.5);
+  font-size: 1.8rem;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+}
+
+.modal-content input {
+  width: calc(100% - 30px);
+  margin: var(--spacing-unit) 0;
+  padding: 12px 15px;
+  border: 1px solid transparent;
+  border-radius: var(--border-radius-sm);
+  outline: none;
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text-light);
+  transition: all 0.3s ease;
+}
+
+.modal-content input:focus {
+    border-color: var(--secondary-color);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-content input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-unit);
+  margin-top: calc(var(--spacing-unit) * 2.5);
+}
+
+.login-btn, .cancel-btn {
+    padding: 12px 24px;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.login-btn {
+  background: var(--gradient-primary);
+  border: none;
+  color: var(--text-light);
+}
+
+.login-btn:hover {
+  background: var(--gradient-primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.cancel-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: var(--text-light);
+}
+
+.cancel-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+
+/* --------------------
+   3. Dashboard & Main App
+   -------------------- */
+.dashboard-body {
+  background: var(--bg-light);
+  color: var(--text-dark);
+  padding: calc(var(--spacing-unit) * 3);
+}
+
+.course-card {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: calc(var(--spacing-unit) * 3);
+  background: #ffffff;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+  margin-bottom: calc(var(--spacing-unit) * 2.5);
+}
+
+.course-card:hover {
+  box-shadow: var(--box-shadow-hover);
+  transform: translateY(-4px);
+}
+
+.course-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.course-info {
+  padding: calc(var(--spacing-unit) * 2.5);
+  display: flex;
+  flex-direction: column;
+}
+
+.course-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-unit);
+}
+
+.course-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: var(--text-dark);
+}
+
+.course-instructor {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.course-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: var(--spacing-unit);
+  margin: auto 0;
+  color: #334155;
+  font-size: 0.9rem;
+}
+
+.progress-track {
+  background: #e2e8f0;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: var(--spacing-unit);
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--gradient-primary);
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+.course-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: calc(var(--spacing-unit) * 2);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.btn-continue {
+  background: var(--primary-color);
+  color: var(--text-light);
+  border: none;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-continue:hover {
+  background: var(--primary-hover);
+  box-shadow: 0 6px 12px rgba(106, 17, 203, 0.3);
+}
+
+/* --------------------
+   4. Animations
+   -------------------- */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -73,209 +321,14 @@ body {
     transform: translateY(0);
   }
 }
-/* === Student Login Popup Styles === */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(10, 10, 30, 0.8); /* slightly transparent dark layer */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 999;
-  backdrop-filter: blur(6px);
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-.modal-content {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  padding: 40px;
-  border-radius: 20px;
-  width: 400px;
-  text-align: center;
-  color: white;
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(12px);
-  animation: popIn 0.4s ease-in-out;
-}
-
-.modal-content h2 {
-  margin-bottom: 20px;
-  font-size: 1.6rem;
-  color: #fff;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
-}
-
-.modal-content input {
-  width: 90%;
-  margin: 10px 0;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 8px;
-  outline: none;
-  font-size: 1rem;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-}
-
-.modal-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-.login-btn {
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
-  border: none;
-  padding: 10px 20px;
-  border-radius: 10px;
-  color: white;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.login-btn:hover {
-  background: linear-gradient(135deg, #8e2de2, #4a00e0);
-  transform: scale(1.05);
-}
-
-.cancel-btn {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 10px 20px;
-  border-radius: 10px;
-  color: white;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.cancel-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
 
 @keyframes popIn {
   from {
     opacity: 0;
-    transform: scale(0.85);
+    transform: scale(0.9);
   }
   to {
     opacity: 1;
     transform: scale(1);
   }
 }
-
-/* ======================================
-   PERFECT COURSE CARD (Like Screenshot)
-   ====================================== */
-/* ===============================
-   LEARNHUB PRO – STUDENT DASHBOARD UI
-   =============================== */
-
-.dashboard-bg {
-  background: linear-gradient(180deg, #f5f3ff 0%, #faf8ff 100%);
-  min-height: 100vh;
-  padding: 20px;
-}
-
-.course-card {
-  display: flex;
-  align-items: center;
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 20px;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
-  border: 1px solid #f0f0f0;
-  transition: all 0.3s ease;
-}
-
-.course-card:hover {
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-}
-
-.course-thumbnail {
-  width: 160px;
-  height: 120px;
-  border-radius: 10px;
-  object-fit: cover;
-  margin-right: 24px;
-}
-
-.course-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.course-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.course-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #111;
-}
-
-.course-instructor {
-  font-size: 14px;
-  color: #666;
-}
-
-.course-stats {
-  display: flex;
-  justify-content: space-between;
-  max-width: 480px;
-  margin-top: 10px;
-}
-
-.course-stats p {
-  font-size: 14px;
-  color: #444;
-}
-
-.progress-track {
-  width: 100%;
-  height: 6px;
-  background: #ddd;
-  border-radius: 4px;
-  margin: 14px 0;
-  overflow: hidden;
-}
-
-.progress-bar {
-  height: 6px;
-  background: #09091d;
-  border-radius: 4px;
-  transition: width 0.4s ease;
-}
-
-.course-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #444;
-  font-size: 14px;
-}
-
-.btn-continue {
-  background: #6c63ff;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 8px 18px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.btn-continue:hover {
-  background: #5148d8;
-}
-
